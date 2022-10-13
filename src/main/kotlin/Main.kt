@@ -2,12 +2,10 @@ import java.io.File
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Scanner
 
 fun main(args: Array<String>) {
 
     val data = readCSV(createStream("src/main/resources/gasreading.csv"))
-    val reader = Scanner(System.`in`)
     var exit = false
 
     while (exit == false) {
@@ -15,16 +13,26 @@ fun main(args: Array<String>) {
         printMenu()
         printFooter()
 
-        var choice: Int = reader.nextInt()
+        var choice: Int = readLine()!!.toInt()
 
         when (choice) {
             1 -> {
                 try {
                     println("Enter date in the format dd/mm/yyyy:")
-                    var input: String = reader.next()
+                    var input: String? = readLine()
                     println(getMonth(input, data))
                 } catch (e: Exception) {
-                    print("try again")
+                    print("something went wrong, please try again")
+                }
+            }
+
+            2 -> {
+                try {
+                    println("Enter year in the format yyyy:")
+                    var input: String? = readLine()
+                    println(getYear(input, data))
+                } catch (e: Exception) {
+                    print("something went wrong, please try again")
                 }
             }
 
@@ -46,7 +54,7 @@ fun printHeader() {
 fun printMenu() {
     print(
         """
-**Press(1) to print the consumption per year**
+**Press(1) to print the consumption per month**
 **Press(2) to print the consumption per year**
 ***************Press(3) to exit***************
 """
@@ -92,13 +100,23 @@ fun readCSV(input: InputStream): List<MonthData> {
         }.toList()
 }
 
-fun getMonth(month: String, data: List<MonthData>): MonthData? {
+fun getMonth(month: String?, data: List<MonthData>): MonthData? {
     var result: MonthData? = null
     data.forEach {
         if (it.beginDate <= LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy")) &&
             it.endDate > LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         ) {
             result = it
+        }
+    }
+    return result
+}
+
+fun getYear(year: String?, data: List<MonthData>): List<MonthData> {
+    val result: List<MonthData> = emptyList()
+    data.forEach {
+        if (it.endDate.year == year!!.toInt()) {
+            result.plus(it)
         }
     }
     return result
