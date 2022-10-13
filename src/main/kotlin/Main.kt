@@ -113,10 +113,10 @@ fun getMonth(month: String?, data: List<MonthData>): MonthData? {
 }
 
 fun getYear(year: String?, data: List<MonthData>): List<MonthData> {
-    val result: List<MonthData> = emptyList()
+    val result = mutableListOf<MonthData>()
     data.forEach {
         if (it.endDate.year == year!!.toInt()) {
-            result.plus(it)
+            result.add(it)
         }
     }
     return result
