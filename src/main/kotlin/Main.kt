@@ -122,6 +122,7 @@ fun getYear(year: String?, data: List<MonthData>): List<MonthData> {
     return result
 }
 
+
 fun calcMonth(month: MonthData, calc: Int): Int {
     if (calc == 1) {
         var result = month.beginDate.dayOfMonth - month.endDate.dayOfMonth
