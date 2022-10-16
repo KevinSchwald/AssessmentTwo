@@ -21,9 +21,17 @@ fun main(args: Array<String>) {
                         println("Enter month in the format mm/yyyy:")
                         val inputMonth: String? = readlnOrNull()
                         println(pretty(getMonth(inputMonth, data)))
-                        println("if you want to get the consumption of the chosen month enter m3 or kwh")
-                        val inputConsumption: String? = readlnOrNull()
-                        println("${calcMonth(getMonth(inputMonth, data)!!, inputConsumption!!)} $inputConsumption")
+                        try {
+                            println("if you want to get the consumption of the chosen month enter m3 or kwh")
+                            val inputConsumption: String? = readlnOrNull()
+                            if (inputConsumption == "m3" ||  inputConsumption == "kwh"){
+                                println("${calcMonth(getMonth(inputMonth, data)!!, inputConsumption)} $inputConsumption")
+                            } else {
+                                println("please only enter m3 or kwh")
+                            }
+                        } catch (e: Exception) {
+                            println("something went wrong, please try again")
+                        }
                     } catch (e: Exception) {
                         print("something went wrong, please try again")
                     }
@@ -34,19 +42,26 @@ fun main(args: Array<String>) {
                         println("Enter year in the format yyyy:")
                         val inputYear: String? = readlnOrNull()
                         println(pretty(getYear(inputYear, data)))
-                        println("if you want to get a overview of the chosen year enter y otherwise enter n")
-                        val inputConsumption: String? = readlnOrNull()
-                        if (inputConsumption == "y") {
-                            println(calcYear(getYear(inputYear, data)))
-                        } else if (inputConsumption == "n") {
-                            continue
+                        try {
+                            println("if you want to get a overview of the chosen year enter y otherwise enter n")
+                            val inputConsumption: String? = readlnOrNull()
+                            if (inputConsumption == "y") {
+                                println(calcYear(getYear(inputYear, data)))
+                            } else if (inputConsumption == "n") {
+                                continue
+                            } else {
+                                println("please only enter y or n")
+                            }
+                        } catch (e: Exception) {
+                            println("something went wrong, please try again")
                         }
                     } catch (e: Exception) {
-                        print("something went wrong, please try again")
+                        println("something went wrong, please try again")
                     }
                 }
 
                 3 -> exit = true
+                else -> println("please only enter 1,2 or 3 thanks")
             }
         } catch (e: Exception) {
             println("please only enter 1,2 or 3 thanks")
@@ -172,15 +187,16 @@ fun calcYear(data: List<MonthData>): String {
     data.forEach {
         total++
         consumption += calcMonth(it, "kwh")
-        if(max < calcMonth(it, "kwh")){
+        if (max < calcMonth(it, "kwh")) {
             max = calcMonth(it, "kwh")
             maxMonth = it.beginDate.month
         }
-        if (min > calcMonth(it, "kwh")){
+        if (min > calcMonth(it, "kwh")) {
             min = calcMonth(it, "kwh")
             minMonth = it.beginDate.month
         }
     }
+
     return "there were $total months in the chosen year, " +
             "the total Consumption was $consumption, " +
             "the max consumption was $max in the month of $maxMonth, " +
