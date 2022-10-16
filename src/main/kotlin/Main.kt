@@ -8,18 +8,16 @@ fun main(args: Array<String>) {
     val data = readCSV(createStream("src/main/resources/gasreading.csv"))
     var exit = false
 
-    while (exit == false) {
+    while (!exit) {
         printHeader()
         printMenu()
         printFooter()
 
-        var choice: Int = readLine()!!.toInt()
-
-        when (choice) {
+        when (readln().toInt()) {
             1 -> {
                 try {
                     println("Enter date in the format dd/mm/yyyy:")
-                    var input: String? = readLine()
+                    val input: String? = readlnOrNull()
                     println(getMonth(input, data))
                 } catch (e: Exception) {
                     print("something went wrong, please try again")
@@ -29,7 +27,7 @@ fun main(args: Array<String>) {
             2 -> {
                 try {
                     println("Enter year in the format yyyy:")
-                    var input: String? = readLine()
+                    val input: String? = readlnOrNull()
                     println(getYear(input, data))
                 } catch (e: Exception) {
                     print("something went wrong, please try again")
@@ -43,7 +41,7 @@ fun main(args: Array<String>) {
 
 fun printHeader() {
     print(
-        """
+            """
 **********************************************     
 ****** Welcome to Red Rocket Gas Station******
 **********************************************
@@ -53,7 +51,7 @@ fun printHeader() {
 
 fun printMenu() {
     print(
-        """
+            """
 **Press(1) to print the consumption per month**
 **Press(2) to print the consumption per year**
 ***************Press(3) to exit***************
@@ -63,7 +61,7 @@ fun printMenu() {
 
 fun printFooter() {
     print(
-        """
+            """
 ********************************************** 
 ********************************************** 
 ********************************************** 
@@ -72,11 +70,11 @@ fun printFooter() {
 }
 
 data class MonthData(
-    val beginDate: LocalDate,
-    val endDate: LocalDate,
-    val beginIndex: Int,
-    val endIndex: Int,
-    val kpcs: Double
+        val beginDate: LocalDate,
+        val endDate: LocalDate,
+        val beginIndex: Int,
+        val endIndex: Int,
+        val kpcs: Double
 )
 
 fun createStream(path: String): InputStream {
@@ -87,24 +85,24 @@ fun readCSV(input: InputStream): List<MonthData> {
     val reader = input.bufferedReader()
     reader.readLine() // to cut the first line out
     return reader.lineSequence()
-        .filter { it.isNotBlank() }
-        .map {
-            val (beginDate, endDate, beginIndex, endIndex, kpcs) = it.split(',', ignoreCase = false, limit = 5)
-            MonthData(
-                beginDate = LocalDate.parse(beginDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                endDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                beginIndex.toInt(),
-                endIndex.toInt(),
-                kpcs.toDouble()
-            )
-        }.toList()
+            .filter { it.isNotBlank() }
+            .map {
+                val (beginDate, endDate, beginIndex, endIndex, kpcs) = it.split(',', ignoreCase = false, limit = 5)
+                MonthData(
+                        beginDate = LocalDate.parse(beginDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        endDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        beginIndex.toInt(),
+                        endIndex.toInt(),
+                        kpcs.toDouble()
+                )
+            }.toList()
 }
 
 fun getMonth(month: String?, data: List<MonthData>): MonthData? {
     var result: MonthData? = null
     data.forEach {
         if (it.beginDate <= LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy")) &&
-            it.endDate > LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                it.endDate > LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         ) {
             result = it
         }
@@ -123,12 +121,13 @@ fun getYear(year: String?, data: List<MonthData>): List<MonthData> {
 }
 
 
-fun calcMonth(month: MonthData, calc: Int): Int {
-    if (calc == 1) {
-        var result = month.beginDate.dayOfMonth - month.endDate.dayOfMonth
+fun calcMonth(month: MonthData, calc: String): Int {
+    var result = 0
+    if (calc == "m3") {
+        result = month.endIndex - month.beginIndex
     }
-    if (calc == 2) {
-        var result = (month.beginDate.dayOfMonth - month.endDate.dayOfMonth) * month.kpcs
+    if (calc == "kwh") {
+        result = ((month.endIndex - month.beginIndex) * month.kpcs).toInt()
     }
     return result
 }
