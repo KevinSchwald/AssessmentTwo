@@ -20,10 +20,10 @@ fun main(args: Array<String>) {
                     try {
                         println("Enter month in the format mm/yyyy:")
                         val inputMonth: String? = readlnOrNull()
-                        println(getMonth(inputMonth, data))
+                        println(pretty(getMonth(inputMonth, data)))
                         println("if you want to get the consumption of the chosen month enter m3 or kwh")
                         val inputConsumption: String? = readlnOrNull()
-                        println(calcMonth(getMonth(inputMonth, data)!!, inputConsumption!!))
+                        println("${calcMonth(getMonth(inputMonth, data)!!, inputConsumption!!)} $inputConsumption")
                     } catch (e: Exception) {
                         print("something went wrong, please try again")
                     }
@@ -33,13 +33,13 @@ fun main(args: Array<String>) {
                     try {
                         println("Enter year in the format yyyy:")
                         val inputYear: String? = readlnOrNull()
-                        println(getYear(inputYear, data))
+                        println(pretty(getYear(inputYear, data)))
                         println("if you want to get a overview of the chosen year enter y otherwise enter n")
                         val inputConsumption: String? = readlnOrNull()
                         if (inputConsumption == "y") {
                             println(calcYear(getYear(inputYear, data)))
                         } else if (inputConsumption == "n") {
-                            break
+                            continue
                         }
                     } catch (e: Exception) {
                         print("something went wrong, please try again")
@@ -82,6 +82,18 @@ fun printFooter() {
 ********************************************** 
 """
     )
+}
+
+fun pretty(input: MonthData?): String {
+    return "Period from ${input!!.beginDate} - ${input.endDate}, beginning at ${input.beginIndex} and ending at ${input.endIndex} the conversion ratio is ${input.kpcs}"
+}
+
+fun pretty(input: List<MonthData>): String {
+    var output = ""
+    input.forEach {
+        output += "${pretty(it)} \n"
+    }
+    return output
 }
 
 data class MonthData(
@@ -169,5 +181,9 @@ fun calcYear(data: List<MonthData>): String {
             minMonth = it.beginDate.month
         }
     }
-    return "total months in this year $total, total Consumption $consumption, max consumption $max and month $maxMonth, min consumption $min and $minMonth and the average is ${consumption / total}"
+    return "there were $total months in the chosen year, " +
+            "the total Consumption was $consumption, " +
+            "the max consumption was $max in the month of $maxMonth, " +
+            "the min consumption was $min in the month of $minMonth " +
+            "and the average consumption in the chosen year was ${consumption / total}."
 }
