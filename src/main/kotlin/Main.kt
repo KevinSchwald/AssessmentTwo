@@ -1,6 +1,7 @@
 import java.io.File
 import java.io.InputStream
 import java.time.LocalDate
+import java.time.Month
 import java.time.format.DateTimeFormatter
 
 fun main(args: Array<String>) {
@@ -13,28 +14,35 @@ fun main(args: Array<String>) {
         printMenu()
         printFooter()
 
-        when (readln().toInt()) {
-            1 -> {
-                try {
-                    println("Enter date in the format dd/mm/yyyy:")
-                    val input: String? = readlnOrNull()
-                    println(getMonth(input, data))
-                } catch (e: Exception) {
-                    print("something went wrong, please try again")
+        try {
+            when (readln().toInt()) {
+                1 -> {
+                    try {
+                        println("Enter month in the format mm/yyyy:")
+                        val inputMonth: String? = readlnOrNull()
+                        println(getMonth(inputMonth, data))
+                        println("if you want to get the consumption of the chosen month enter m3 or kwh")
+                        val inputConsumption: String? = readlnOrNull()
+                        println(calcMonth(getMonth(inputMonth, data)!!, inputConsumption!!))
+                    } catch (e: Exception) {
+                        print("something went wrong, please try again")
+                    }
                 }
-            }
 
-            2 -> {
-                try {
-                    println("Enter year in the format yyyy:")
-                    val input: String? = readlnOrNull()
-                    println(getYear(input, data))
-                } catch (e: Exception) {
-                    print("something went wrong, please try again")
+                2 -> {
+                    try {
+                        println("Enter year in the format yyyy:")
+                        val input: String? = readlnOrNull()
+                        println(getYear(input, data))
+                    } catch (e: Exception) {
+                        print("something went wrong, please try again")
+                    }
                 }
-            }
 
-            3 -> exit = true
+                3 -> exit = true
+            }
+        } catch (e: Exception) {
+            println("please only enter 1,2 or 3 thanks")
         }
     }
 }
@@ -98,12 +106,13 @@ fun readCSV(input: InputStream): List<MonthData> {
             }.toList()
 }
 
-fun getMonth(month: String?, data: List<MonthData>): MonthData? {
+fun getMonth(input: String?, data: List<MonthData>): MonthData? {
     var result: MonthData? = null
+    val temp = input!!.split("/")
+    val month = Month.of(temp[0].toInt())
+    val year = temp[1].toInt()
     data.forEach {
-        if (it.beginDate <= LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy")) &&
-                it.endDate > LocalDate.parse(month, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        ) {
+        if ((it.beginDate.month == month) && (it.beginDate.year == year)) {
             result = it
         }
     }
