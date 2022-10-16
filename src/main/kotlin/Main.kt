@@ -32,8 +32,15 @@ fun main(args: Array<String>) {
                 2 -> {
                     try {
                         println("Enter year in the format yyyy:")
-                        val input: String? = readlnOrNull()
-                        println(getYear(input, data))
+                        val inputYear: String? = readlnOrNull()
+                        println(getYear(inputYear, data))
+                        println("if you want to get a overview of the chosen year enter y otherwise enter n")
+                        val inputConsumption: String? = readlnOrNull()
+                        if (inputConsumption == "y") {
+                            println(calcYear(getYear(inputYear, data)))
+                        } else if (inputConsumption == "n") {
+                            break
+                        }
                     } catch (e: Exception) {
                         print("something went wrong, please try again")
                     }
@@ -139,4 +146,28 @@ fun calcMonth(month: MonthData, calc: String): Int {
         result = ((month.endIndex - month.beginIndex) * month.kpcs).toInt()
     }
     return result
+}
+
+fun calcYear(data: List<MonthData>): String {
+
+    var total = 0
+    var consumption = 0
+    var max = 0
+    var maxMonth = Month.APRIL
+    var min = Integer.MAX_VALUE
+    var minMonth = Month.APRIL
+
+    data.forEach {
+        total++
+        consumption += calcMonth(it, "kwh")
+        if(max < calcMonth(it, "kwh")){
+            max = calcMonth(it, "kwh")
+            maxMonth = it.beginDate.month
+        }
+        if (min > calcMonth(it, "kwh")){
+            min = calcMonth(it, "kwh")
+            minMonth = it.beginDate.month
+        }
+    }
+    return "total months in this year $total, total Consumption $consumption, max consumption $max and month $maxMonth, min consumption $min and $minMonth and the average is ${consumption / total}"
 }
