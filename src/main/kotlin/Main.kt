@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 // The main function in which the CLI runs until exit == true
-fun main(args: Array<String>) {
+fun main() {
 
     val data = readCSV(createStream("src/main/resources/gasreading.csv"))
     var exit = false
@@ -101,7 +101,7 @@ fun printFooter() {
     )
 }
 
-// Two functions called pretty which get a List as Input and are converting the raw List into e readable String by using a String Template
+// Two functions named pretty which get a List as Input and are converting the raw List into e readable String by using a String Template
 fun pretty(input: MonthData?): String {
     return "Period from ${input!!.beginDate} - ${input.endDate}, beginning at ${input.beginIndex} and ending at ${input.endIndex} the conversion ratio is ${input.kpcs}"
 }
@@ -114,7 +114,7 @@ fun pretty(input: List<MonthData>): String {
     return output
 }
 
-// A data class callrd MonthData because Month is already in use in Kotlin, it stores the information of exactly one month
+// A data class named MonthData because Month is already in use in Kotlin, it stores the information of exactly one month
 data class MonthData(
         val beginDate: LocalDate,
         val endDate: LocalDate,
@@ -123,12 +123,12 @@ data class MonthData(
         val kpcs: Double
 )
 
-// A function called createStream which converts the csv to a InputStream so that the function readCSV can work with the data provided
+// A function named createStream which converts the csv to a InputStream so that the function readCSV can work with the data provided
 fun createStream(path: String): InputStream {
     return File(path).inputStream()
 }
 
-// A function called readCSV which gets a InputStream as parameter and maps the stream to the coresponding fields in the data class MonthData
+// A function named readCSV which gets a InputStream as parameter and maps the stream to the corresponding fields in the data class MonthData
 fun readCSV(input: InputStream): List<MonthData> {
     val reader = input.bufferedReader()
     reader.readLine() // to cut the first line out
@@ -152,8 +152,8 @@ fun readCSV(input: InputStream): List<MonthData> {
     }
 }
 
-// A function called getMonth which returns a month as MonthData out of a List<MonthData>
-// Tis function is used to display the chosen month and is used to get chosen months to calculate
+// A function named getMonth which returns a month as MonthData out of a List<MonthData>
+// This function is used to display the chosen month and is used to get chosen months to calculate
 fun getMonth(input: String?, data: List<MonthData>): MonthData? {
     var result: MonthData? = null
     val temp = input!!.split("/")
@@ -179,7 +179,7 @@ fun getYear(year: String?, data: List<MonthData>): List<MonthData> {
     return result
 }
 
-// This function gets a MonthData object and the chosen calculaten as input and calculates either the m3 or kwh
+// This function gets a MonthData object and the chosen calculated as input and calculates either the m3 or kwh
 fun calcMonth(month: MonthData, calc: String): Int {
     var result = 0
     if (calc == "m3") {
